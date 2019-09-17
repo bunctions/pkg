@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - "1.12"
+  - "1.13"
+
+env:
+  - GO111MODULE=on
+
+branches:
+  only:
+    - master
+
+install: make dep
+
+script: make test
