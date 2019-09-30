@@ -58,3 +58,4 @@ Temporary Items
 docker-compose.override.yml
 
 ### Project Specific ###
+build

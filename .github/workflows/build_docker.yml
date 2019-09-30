@@ -1,0 +1,30 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Build the Docker Image
+        run: docker build . --tag ${IMAGE_NAME}:just-built
+        env:
+          IMAGE_NAME: docker.pkg.github.com/bunctions/pkg/runners
+
+      - name: Push the Docker Image
+        run: |
+          export GITHUB_SHA=$(git rev-parse --short HEAD)
+          export IMAGE_VERSION=dev-${GITHUB_SHA}
+          docker login docker.pkg.github.com -u ${PKG_PUBLISH_USER} -p ${PKG_PUBLISH_TOKEN}
+          docker tag ${IMAGE_NAME}:just-built ${IMAGE_NAME}:${IMAGE_VERSION}
+          docker push ${IMAGE_NAME}:${IMAGE_VERSION}
+        env:
+          IMAGE_NAME: docker.pkg.github.com/bunctions/pkg/runners
+          PKG_PUBLISH_USER: ben181231
+          PKG_PUBLISH_TOKEN: ${{ secrets.PKG_PUBLISH_TOKEN }}
