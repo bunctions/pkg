@@ -12,10 +12,18 @@ type Environment map[string]interface{}
 // WithEnvironment returns a copy of given context, with
 // the environment injected.
 func WithEnvironment(ctx context.Context, env Environment) context.Context {
+	return WithEnvironments(ctx, env)
+}
+
+// WithEnvironments returns a copy of given context, with
+// the multiple environments injected.
+func WithEnvironments(ctx context.Context, envs ...Environment) context.Context {
 	parent := ctx
 	if parent == nil {
 		parent = context.Background()
 	}
+
+	env := MergeEnvironments(envs...)
 
 	return context.WithValue(parent, ctxEnvironmentKey{}, env)
 }
@@ -31,6 +39,18 @@ func EnvironmentFromContext(ctx context.Context) Environment {
 	env, ok := ctx.Value(ctxEnvironmentKey{}).(Environment)
 	if !ok {
 		return emptyEnv
+	}
+
+	return env
+}
+
+func MergeEnvironments(envs ...Environment) Environment {
+	env := Environment{}
+
+	for _, eachEnv := range envs {
+		for key, value := range eachEnv {
+			env[key] = value
+		}
 	}
 
 	return env

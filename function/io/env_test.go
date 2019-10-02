@@ -58,6 +58,68 @@ func TestWithEnvironment(t *testing.T) {
 	}
 }
 
+func TestWithEnvironments(t *testing.T) {
+	type testingFunc func(*testing.T)
+	type args struct {
+		ctx  context.Context
+		envs []Environment
+	}
+	type testData struct {
+		data     args
+		expected Environment
+	}
+
+	checking := func(d testData) testingFunc {
+		return func(t *testing.T) {
+			ctx := WithEnvironments(d.data.ctx, d.data.envs...)
+
+			assert.Equal(
+				t,
+				d.expected,
+				ctx.Value(ctxEnvironmentKey{}),
+			)
+		}
+	}
+
+	theEnvs := []Environment{
+		Environment{
+			"hello": "man",
+			"foo":   "bar",
+		},
+		Environment{
+			"hello":       "world",
+			"okay-google": 123,
+		},
+	}
+
+	targetEnv := Environment{
+		"hello":       "world",
+		"foo":         "bar",
+		"okay-google": 123,
+	}
+
+	testTable := map[string]testData{
+		"BasicCase": {
+			data: args{
+				ctx:  context.Background(),
+				envs: theEnvs,
+			},
+			expected: targetEnv,
+		},
+		"NilContextCase": {
+			data: args{
+				ctx:  nil,
+				envs: theEnvs,
+			},
+			expected: targetEnv,
+		},
+	}
+
+	for name, td := range testTable {
+		t.Run(name, checking(td))
+	}
+}
+
 func TestEnvironmentFromContext(t *testing.T) {
 	type testingFunc func(*testing.T)
 	type testData struct {
