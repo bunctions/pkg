@@ -7,6 +7,7 @@ import (
 
 	"github.com/bunctions/pkg/function"
 	funcio "github.com/bunctions/pkg/function/io"
+	"github.com/bunctions/pkg/runner"
 )
 
 type loader struct {
@@ -49,6 +50,12 @@ func (l *loader) handleSingleCallable(
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		ctx := funcio.WithInputReader(r.Context(), r.Body)
 		ctx = funcio.WithOutputWriter(ctx, rw)
+		ctx = funcio.WithEnvironments(
+			ctx,
+			runner.GetSystemEnvironment(),
+			getRequestHeaderAsEnvironment(r),
+			getRequestParamsAsEnvironment(r),
+		)
 
 		_ = callable.Call(ctx)
 	})
