@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/bunctions/pkg/runner/http/adapter"
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 )
@@ -23,29 +24,33 @@ func newLogger() *zap.Logger {
 
 func main() {
 	logger := newLogger()
-	config := &config{}
-	err := envconfig.Process("", config)
+	conf := &config{}
+	err := envconfig.Process("", conf)
 	if err != nil {
 		logger.Panic("Error on process environment", zap.Error(err))
 		return
 	}
 
-	logger.Info("Got environment", zap.Any("env", config))
-
 	l := &loader{
-		path:   config.ExportingPath,
-		symbol: config.ExportingSymbol,
+		path:   conf.ExportingPath,
+		symbol: conf.ExportingSymbol,
 	}
 
-	if err := l.load(); err != nil {
+	handler, err := l.loadHandler()
+	if err != nil {
 		logger.Panic("Error on loading plugin", zap.Error(err))
 		return
 	}
 
-	addr := fmt.Sprintf(":%d", config.Port)
-	logger.Info("Server is starting", zap.Uint("port", config.Port))
+	handler = adapter.ApplyAll(
+		handler,
+		adapter.NewContentTypeAdapter(conf.ContentType),
+	)
 
-	if err := http.ListenAndServe(addr, l.handler); err != nil {
+	addr := fmt.Sprintf(":%d", conf.Port)
+	logger.Info("Server is starting", zap.Uint("port", conf.Port))
+
+	if err := http.ListenAndServe(addr, handler); err != nil {
 		logger.Panic("Error on starting server", zap.Error(err))
 	}
 }

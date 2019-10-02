@@ -10,34 +10,35 @@ import (
 )
 
 type loader struct {
-	path    string
-	symbol  string
-	handler http.HandlerFunc
+	path   string
+	symbol string
 }
 
 var ErrUnknownSymbolType = errors.New("Unknown symbol type")
 
-func (l *loader) load() error {
+func (l *loader) loadHandler() (http.Handler, error) {
 	loaded, err := plugin.Open(l.path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	symbol, err := loaded.Lookup(l.symbol)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	handler := http.Handler(nil)
 
 	switch s := symbol.(type) {
 	case function.SingleCallablePackager:
-		l.handler = l.handleSingleCallable(s)
+		handler = l.handleSingleCallable(s)
 	case function.MultiCallablePackager:
-		l.handler = l.handleMultipleCallable(s)
+		handler = l.handleMultipleCallable(s)
 	default:
-		return ErrUnknownSymbolType
+		return nil, ErrUnknownSymbolType
 	}
 
-	return nil
+	return handler, nil
 }
 
 func (l *loader) handleSingleCallable(
