@@ -35,3 +35,12 @@ func (mr memoryRegistry) GetByName(string) (Callable, bool) {
 	c, ok := mr[unnamedCallableKey]
 	return c, ok
 }
+
+func (mr memoryRegistry) GetAll() []Callable {
+	cs := []Callable(nil)
+	for _, c := range mr {
+		cs = append(cs, c)
+	}
+
+	return cs
+}

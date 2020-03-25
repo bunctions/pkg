@@ -8,6 +8,7 @@ type Registry interface {
 	Register(Callable)
 	Get() (Callable, bool)
 	GetByName(string) (Callable, bool)
+	GetAll() []Callable
 }
 
 var DefaultRegistry Registry
