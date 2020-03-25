@@ -1,6 +1,7 @@
-package main
+package http
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -12,7 +13,7 @@ func getRequestHeaderAsEnvironment(r *http.Request) funcio.Environment {
 
 	for key, values := range r.Header {
 		// only respect the first occurrence
-		env[strings.ToLower(key)] = values[0]
+		env[fmt.Sprintf("header_%s", strings.ToLower(key))] = values[0]
 	}
 
 	return env
@@ -23,7 +24,7 @@ func getRequestParamsAsEnvironment(r *http.Request) funcio.Environment {
 
 	for key, values := range r.URL.Query() {
 		// only respect the first occurrence
-		env[strings.ToLower(key)] = values[0]
+		env[fmt.Sprintf("param_%s", strings.ToLower(key))] = values[0]
 	}
 
 	return env
