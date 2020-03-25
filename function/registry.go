@@ -10,3 +10,12 @@ type Registry interface {
 	GetByName(string) (Callable, bool)
 }
 
+var DefaultRegistry Registry
+
+func init() {
+	DefaultRegistry = NewMemoryRegistry()
+}
+
+func Register(c Callable) {
+	DefaultRegistry.Register(c)
+}
