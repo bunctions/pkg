@@ -6,13 +6,17 @@ import (
 
 	"github.com/bunctions/pkg/function"
 	funcio "github.com/bunctions/pkg/function/io"
+	"github.com/bunctions/pkg/runner"
 )
 
-var Exported = function.SingleCallablePackagerFunc(
-	func(args ...string) function.Callable {
-		return function.CallableFunc(checkenv)
-	},
-)
+func init() {
+	function.Register(
+		function.NewNamedCallable(
+			"check_env",
+			function.CallableFunc(checkenv),
+		),
+	)
+}
 
 type response struct {
 	Success     bool
@@ -30,4 +34,8 @@ func checkenv(ctx context.Context) error {
 
 	encoder := json.NewEncoder(writer)
 	return encoder.Encode(resp)
+}
+
+func main() {
+	runner.Start()
 }
