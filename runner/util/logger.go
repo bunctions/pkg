@@ -1,8 +1,8 @@
-package http
+package util
 
 import "go.uber.org/zap"
 
-func newLogger() *zap.Logger {
+func NewLogger() *zap.Logger {
 	loggerConfig := zap.NewProductionConfig()
 	loggerConfig.OutputPaths = []string{"stdout"}
 	loggerConfig.ErrorOutputPaths = []string{"stderr"}

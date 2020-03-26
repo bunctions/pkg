@@ -8,9 +8,9 @@ import (
 
 type ctxOutputWriterKey struct{}
 
-// WithOutputWriter returns a copy of given context, with
+// ContextWithOutputWriter returns a copy of given context, with
 // the output writer injected.
-func WithOutputWriter(ctx context.Context, w io.Writer) context.Context {
+func ContextWithOutputWriter(ctx context.Context, w io.Writer) context.Context {
 	parent := ctx
 	if parent == nil {
 		parent = context.Background()

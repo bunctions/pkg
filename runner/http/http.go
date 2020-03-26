@@ -6,13 +6,15 @@ import (
 
 	"github.com/bunctions/pkg/function"
 	"github.com/bunctions/pkg/runner/http/adapter"
+	"github.com/bunctions/pkg/runner/util"
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 )
 
 // Start starts a HTTP runner
 func Start() {
-	logger := newLogger()
+	logger := util.NewLogger().
+		With(zap.String("runner", "http"))
 
 	conf := &config{}
 	err := envconfig.Process("http", conf)
@@ -21,13 +23,16 @@ func Start() {
 		return
 	}
 
+	router := newPathRouter(function.DefaultRegistry, logger)
 	handler := adapter.ApplyAll(
-		newPathRouter(function.DefaultRegistry),
+		router,
 		adapter.NewContentTypeAdapter(conf.ContentType),
+		adapter.NewLoggingAdapter(),
+		adapter.NewLoggerAdapter(logger),
 	)
 
 	addr := fmt.Sprintf(":%d", conf.Port)
-	logger.Info("Server is starting", zap.Uint("port", conf.Port))
+	logger.Info("server is starting", zap.Uint("port", conf.Port))
 
 	if err := http.ListenAndServe(addr, handler); err != nil {
 		logger.Panic("Error on starting server", zap.Error(err))

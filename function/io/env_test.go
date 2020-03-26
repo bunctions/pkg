@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWithEnvironment(t *testing.T) {
+func TestContextWithEnvironment(t *testing.T) {
 	type testingFunc func(*testing.T)
 	type args struct {
 		ctx context.Context
@@ -20,7 +20,7 @@ func TestWithEnvironment(t *testing.T) {
 
 	checking := func(d testData) testingFunc {
 		return func(t *testing.T) {
-			ctx := WithEnvironment(d.data.ctx, d.data.env)
+			ctx := ContextWithEnvironment(d.data.ctx, d.data.env)
 
 			assert.Equal(
 				t,
@@ -58,7 +58,7 @@ func TestWithEnvironment(t *testing.T) {
 	}
 }
 
-func TestWithEnvironments(t *testing.T) {
+func TestContextWithEnvironments(t *testing.T) {
 	type testingFunc func(*testing.T)
 	type args struct {
 		ctx  context.Context
@@ -71,7 +71,7 @@ func TestWithEnvironments(t *testing.T) {
 
 	checking := func(d testData) testingFunc {
 		return func(t *testing.T) {
-			ctx := WithEnvironments(d.data.ctx, d.data.envs...)
+			ctx := ContextWithEnvironments(d.data.ctx, d.data.envs...)
 
 			assert.Equal(
 				t,

@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/bunctions/pkg/function"
+	"github.com/bunctions/pkg/function/logger"
+	"go.uber.org/zap"
 )
 
 type router http.Handler
@@ -23,13 +25,14 @@ type pathRouter struct {
 	handlers       map[string]http.Handler
 }
 
-func newPathRouter(registry function.Registry) router {
+func newPathRouter(registry function.Registry, logger *zap.Logger) router {
 	prtr := &pathRouter{
 		defaultHandler: http.NotFoundHandler(),
 		handlers:       map[string]http.Handler{},
 	}
 
 	if c, ok := registry.Get(); ok {
+		logger.Info("setup default handler")
 		prtr.defaultHandler = newHandler(c)
 	}
 
@@ -37,6 +40,7 @@ func newPathRouter(registry function.Registry) router {
 	for _, c := range cs {
 		if nc, ok := c.(function.NamedCallable); ok {
 			name := escapeFuncName(nc.GetName())
+			logger.Info("setup handler", zap.String("name", name))
 			prtr.handlers[name] = newHandler(nc)
 		}
 	}
@@ -45,10 +49,12 @@ func newPathRouter(registry function.Registry) router {
 }
 
 func (prtr *pathRouter) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	logger := logger.LoggerFromContext(r.Context())
+
 	var err error
 	defer func() {
 		if err != nil {
-			// TODO: do error logging here
+			logger.Warn("error handling", zap.Error(err))
 			http.NotFound(rw, r)
 			return
 		}

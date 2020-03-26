@@ -11,9 +11,9 @@ import (
 func newHandler(callable function.Callable) http.Handler {
 	return http.HandlerFunc(
 		func(rw http.ResponseWriter, r *http.Request) {
-			ctx := funcio.WithInputReader(r.Context(), r.Body)
-			ctx = funcio.WithOutputWriter(ctx, rw)
-			ctx = funcio.WithEnvironments(
+			ctx := funcio.ContextWithInputReader(r.Context(), r.Body)
+			ctx = funcio.ContextWithOutputWriter(ctx, rw)
+			ctx = funcio.ContextWithEnvironments(
 				ctx,
 				runnerutil.GetSystemEnvironment(),
 				getRequestHeaderAsEnvironment(r),

@@ -9,15 +9,15 @@ type ctxEnvironmentKey struct{}
 // Environment defines the representation of the execution environment.
 type Environment map[string]interface{}
 
-// WithEnvironment returns a copy of given context, with
+// ContextWithEnvironment returns a copy of given context, with
 // the environment injected.
-func WithEnvironment(ctx context.Context, env Environment) context.Context {
-	return WithEnvironments(ctx, env)
+func ContextWithEnvironment(ctx context.Context, env Environment) context.Context {
+	return ContextWithEnvironments(ctx, env)
 }
 
-// WithEnvironments returns a copy of given context, with
+// ContextWithEnvironments returns a copy of given context, with
 // the multiple environments injected.
-func WithEnvironments(ctx context.Context, envs ...Environment) context.Context {
+func ContextWithEnvironments(ctx context.Context, envs ...Environment) context.Context {
 	parent := ctx
 	if parent == nil {
 		parent = context.Background()

@@ -14,3 +14,9 @@ func ApplyAll(h http.Handler, adapters ...Adapter) http.Handler {
 
 	return finalHandler
 }
+
+type AdapterFunc func(http.Handler) http.Handler
+
+func (f AdapterFunc) Apply(next http.Handler) http.Handler {
+	return f(next)
+}

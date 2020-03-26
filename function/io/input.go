@@ -8,9 +8,9 @@ import (
 
 type ctxInputReaderKey struct{}
 
-// WithInputReader returns a copy of given context, with
+// ContextWithInputReader returns a copy of given context, with
 // the input readcloser injected.
-func WithInputReader(ctx context.Context, r io.ReadCloser) context.Context {
+func ContextWithInputReader(ctx context.Context, r io.ReadCloser) context.Context {
 	parent := ctx
 	if parent == nil {
 		parent = context.Background()

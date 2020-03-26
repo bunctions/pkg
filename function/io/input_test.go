@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWithInputReader(t *testing.T) {
+func TestContextWithInputReader(t *testing.T) {
 	type testingFunc func(*testing.T)
 	type args struct {
 		ctx        context.Context
@@ -23,7 +23,7 @@ func TestWithInputReader(t *testing.T) {
 
 	checking := func(d testData) testingFunc {
 		return func(t *testing.T) {
-			ctx := WithInputReader(d.data.ctx, d.data.readCloser)
+			ctx := ContextWithInputReader(d.data.ctx, d.data.readCloser)
 
 			assert.Equal(
 				t,

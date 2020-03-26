@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWithOutputWriter(t *testing.T) {
+func TestContextWithOutputWriter(t *testing.T) {
 	type testingFunc func(*testing.T)
 	type args struct {
 		ctx    context.Context
@@ -23,7 +23,7 @@ func TestWithOutputWriter(t *testing.T) {
 
 	checking := func(d testData) testingFunc {
 		return func(t *testing.T) {
-			ctx := WithOutputWriter(d.data.ctx, d.data.writer)
+			ctx := ContextWithOutputWriter(d.data.ctx, d.data.writer)
 
 			assert.Equal(t, d.expected, ctx.Value(ctxOutputWriterKey{}))
 		}
