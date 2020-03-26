@@ -10,12 +10,7 @@ import (
 )
 
 func init() {
-	function.Register(
-		function.NewNamedCallable(
-			"check_env",
-			function.CallableFunc(checkenv),
-		),
-	)
+	function.RegisterNamedFunc("check_env", checkenv)
 }
 
 type response struct {

@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	function.Register(function.CallableFunc(helloworld))
+	function.RegisterFunc(helloworld)
 }
 
 func helloworld(ctx context.Context) error {
