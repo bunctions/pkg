@@ -11,8 +11,16 @@ import (
 	"go.uber.org/zap"
 )
 
+const Name = "http"
+
+func Runner() runner {
+	return runner{}
+}
+
+type runner struct{}
+
 // Start starts a HTTP runner
-func Start() {
+func (runner) Start() {
 	logger := util.NewLogger().
 		With(zap.String("runner", "http"))
 
