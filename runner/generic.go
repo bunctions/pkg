@@ -6,6 +6,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 
+	"github.com/bunctions/pkg/runner/exec"
 	"github.com/bunctions/pkg/runner/http"
 	"github.com/bunctions/pkg/runner/util"
 )
@@ -45,6 +46,8 @@ func (genericRunner) Start() {
 	switch runnerType {
 	case http.Name:
 		r = http.Runner()
+	case exec.Name:
+		r = exec.Runner()
 	default:
 		logger.Error("failed to detect the runner")
 		return
